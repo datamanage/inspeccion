@@ -43,33 +43,42 @@ function guardar(){
 
 function enviarDatos(descripcion, fotoBase64){
 
-  const formData = new URLSearchParams();
-  formData.append("id_estructura", estructuraID);
-  formData.append("x", x_rel);
-  formData.append("y", y_rel);
-  formData.append("descripcion", descripcion);
-  formData.append("foto", fotoBase64);
+  const datos = {
+    id_estructura: estructuraID,
+    x: x_rel,
+    y: y_rel,
+    descripcion: descripcion,
+    foto: fotoBase64
+  };
 
   fetch("https://script.google.com/macros/s/AKfycbxnmZoI37EwgEFv2KpUvJj5Zp0rPBUED5aTYPlXOAfQ8N8283K8qX1Az7xvx9S6MUCg2Q/exec", {
     method: "POST",
-    body: formData,
-    mode: "no-cors"
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(datos)
   })
   .then(response => response.text())
   .then(data => {
-    console.log(data);
-    alert("Guardado correctamente");
-    location.reload();
+    console.log("Respuesta servidor:", data);
+
+    if(data.includes("OK")){
+      alert("Guardado correctamente");
+      location.reload();
+    } else {
+      alert("Error al guardar");
+    }
   })
   .catch(error => {
     console.error("Error:", error);
+    alert("Error de conexión");
   });
 }
 
 </script>
-
 </body>
 </html>
+
 
 
 
