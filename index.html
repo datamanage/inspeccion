@@ -38,23 +38,22 @@ function guardar(){
 }
 
 function enviarDatos(descripcion, fotoBase64){
+
+  const formData = new URLSearchParams();
+  formData.append("id_estructura", estructuraID);
+  formData.append("x", x_rel);
+  formData.append("y", y_rel);
+  formData.append("descripcion", descripcion);
+  formData.append("foto", fotoBase64);
+
   fetch("https://script.google.com/macros/s/AKfycbw0o-b1OP3Ps5ri7xzBcgxSrOH61gMJSFmILbDjR9YxuKUoAS9oYWV0fB7veX1jABfHmw/exec", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      id_estructura: "1",
-      x: 0,
-      y: 0,
-      descripcion: descripcion,
-      foto: fotoBase64
-    })
+    body: formData
   })
   .then(response => response.text())
   .then(data => {
     console.log(data);
-    alert("Enviado correctamente");
+    alert("Guardado correctamente");
     location.reload();
   })
   .catch(error => {
@@ -66,6 +65,7 @@ function enviarDatos(descripcion, fotoBase64){
 
 </body>
 </html>
+
 
 
 
