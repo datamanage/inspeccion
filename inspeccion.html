@@ -1,59 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inspección</title>
-<style>
-body { margin:0; overflow:hidden; }
-#container { position:relative; width:100vw; height:100vh; }
-#plano { width:100%; height:100%; object-fit:contain; }
-.marker {
-  position:absolute;
-  width:14px;
-  height:14px;
-  background:red;
-  border-radius:50%;
-}
-#popup {
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  background:white;
-  padding:10px;
-  display:none;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Inspección</title>
 </head>
+
 <body>
 
-<div id="container">
-  <img id="plano">
-</div>
+<button onclick="mostrarPopup()">Abrir</button>
 
-<div id="popup">
+<div id="popup" style="display:none;">
   <textarea id="descripcion" placeholder="Descripción"></textarea>
-  <input type="file" id="foto" accept="image/*" capture="environment">
+  <input type="file" id="foto">
   <button onclick="guardar()">Guardar</button>
 </div>
 
 <script>
-let estructuraID = "";
-let x_rel = 0;
-let y_rel = 0;
-
-const params = new URLSearchParams(window.location.search);
-estructuraID = params.get("id");
-document.getElementById("plano").src = params.get("plano");
-
-document.getElementById("container").addEventListener("click", function(e){
-  const rect = this.getBoundingClientRect();
-  x_rel = (e.clientX - rect.left) / rect.width;
-  y_rel = (e.clientY - rect.top) / rect.height;
-
-  mostrarPopup();
-});
 
 function mostrarPopup(){
   document.getElementById("popup").style.display="block";
@@ -62,6 +24,11 @@ function mostrarPopup(){
 function guardar(){
   const descripcion = document.getElementById("descripcion").value;
   const file = document.getElementById("foto").files[0];
+
+  if(!file){
+    alert("Selecciona una imagen");
+    return;
+  }
 
   const reader = new FileReader();
   reader.onload = function(){
@@ -77,9 +44,9 @@ function enviarDatos(descripcion, fotoBase64){
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      id_estructura: estructuraID,
-      x: x_rel,
-      y: y_rel,
+      id_estructura: "1",
+      x: 0,
+      y: 0,
       descripcion: descripcion,
       foto: fotoBase64
     })
@@ -87,12 +54,14 @@ function enviarDatos(descripcion, fotoBase64){
   .then(response => response.text())
   .then(data => {
     console.log(data);
+    alert("Enviado correctamente");
     location.reload();
   })
   .catch(error => {
     console.error("Error:", error);
   });
 }
+
 </script>
 
 </body>
